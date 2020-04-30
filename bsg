@@ -27,16 +27,20 @@ header () {
     echo "  <meta charset=\"utf-8\">"; \
     echo "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"; \
     echo "  <title>crdpa</title>"; echo "  <link rel=\"stylesheet\" href=\"/styles.css\">"; \
-    echo " </head>"; echo "<body>"; echo ""; } > index.html
+    echo " </head>"; echo "<body>"; echo ""; }
 }
 
 bottom () {
-    { echo "</body>"; echo "</html>"; } >> index.html
+    { echo "</body>"; echo "</html>"; }
 }
 
 blog () {
         if [ -f "$f2" ] && [ ! -f "${f2::-3}.html" ]; then
-            pandoc -o "${f2::-3}.html" "$f2"
+            pandoc -o "${f2::-3}.tmp.html" "$f2"
+            header > "${f2::-3}.html"
+            cat "${f2::-3}.tmp.html" >> "${f2::-3}.html"
+            bottom >> "${f2::-3}.html"
+            rm "${f2::-3}.tmp.html"
         fi
         l1=$(echo "${f2::-3}" | sed 's:.*/::')
         printf -- "- %s/[%s](%s)\n" "$y" "$l1" "${f2::-3}.html" >> tmp.md
@@ -69,10 +73,10 @@ if [ -f "$END" ]; then
     } >> index.md
 fi
 
-header
+header > index.html
 pandoc -o tmp.html index.md
 cat tmp.html >> index.html
-bottom
+bottom >> index.html
 rm tmp.html
 
 echo "Done..."
