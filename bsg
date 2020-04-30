@@ -82,6 +82,6 @@ pandoc -o tmp.html index.md
     bottom
 } > index.html
 
-rm tmp.html
+rm tmp.html index.md
 
 echo "Done..."
