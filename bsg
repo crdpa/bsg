@@ -75,10 +75,13 @@ if [ -f "$END" ]; then
     } >> index.md
 fi
 
-header > index.html
 pandoc -o tmp.html index.md
-cat tmp.html >> index.html
-bottom >> index.html
+{
+    header
+    cat tmp.html
+    bottom
+} > index.html
+
 rm tmp.html
 
 echo "Done..."
