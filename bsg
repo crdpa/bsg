@@ -1,0 +1,78 @@
+#!/bin/bash
+# If you want something on the top of every page, make a top.html
+# file that will be included just after <body>.
+# This script uses pandoc to convert markdown to html.
+
+HEAD=top.md
+END=bottom.md
+
+if [ -f blog.md ]; then
+    rm blog.md
+    printf -- "# Blog\n" > blog.md
+else
+    printf -- "# Blog\n" > blog.md
+fi
+
+if [ -f tmp.md ]; then
+    rm tmp.md
+    touch tmp.md
+else
+    touch tmp.md
+fi
+
+
+header () {
+    { echo "<!DOCTYPE html>"; echo "<html>"; echo " <head>"; \
+    echo "  <meta http-equiv=\"Content-Type\" content=\"text/html\">"; \
+    echo "  <meta charset=\"utf-8\">"; \
+    echo "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"; \
+    echo "  <title>crdpa</title>"; echo "  <link rel=\"stylesheet\" href=\"/styles.css\">"; \
+    echo " </head>"; echo "<body>"; echo ""; } > index.html
+}
+
+bottom () {
+    { echo "</body>"; echo "</html>"; } >> index.html
+}
+
+blog () {
+        if [ -f "$f2" ] && [ ! -f "${f2::-3}.html" ]; then
+            pandoc -o "${f2::-3}.html" "$f2"
+        fi
+        l1=$(echo "${f2::-3}" | sed 's:.*/::')
+        printf -- "- %s/[%s](%s)\n" "$y" "$l1" "${f2::-3}.html" >> tmp.md
+}
+
+for f1 in "blog/"*; do
+    y="${f1: -4}"
+    for f2 in "blog/$y/"*.md; do
+        blog
+    done
+done
+
+tac tmp.md >> blog.md
+rm tmp.md
+
+if [ -f "$HEAD" ]; then
+    {
+        cat "$HEAD"
+    	echo ""
+    	cat blog.md
+    } > index.md
+else
+    cat blog.md > index.md
+fi
+
+if [ -f "$END" ]; then
+    {
+        echo ""
+    	cat "$END"
+    } >> index.md
+fi
+
+header
+pandoc -o tmp.html index.md
+cat tmp.html >> index.html
+bottom
+rm tmp.html
+
+echo "Done..."
