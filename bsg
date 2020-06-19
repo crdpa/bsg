@@ -1,7 +1,12 @@
 #!/bin/bash
+#  _  _ _|  _   _
+# (_ | (_| |_) (_|
+#          |    
 # If you want something on the top of every page, make a top.html
 # file that will be included just after <body>.
 # This script uses pandoc to convert markdown to html.
+
+command -v pandoc >/dev/null 2>&1 || { echo >&2 "Pandoc not installed. Aborting."; exit 1; }
 
 HEAD=top.md
 END=bottom.md
@@ -85,3 +90,4 @@ pandoc -o tmp.html index.md
 rm tmp.html index.md
 
 echo "Done..."
+              
