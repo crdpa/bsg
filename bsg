@@ -2,14 +2,16 @@
 #  _  _ _|  _   _
 # (_ | (_| |_) (_|
 #          |    
-# If you want something on the top of every page, make a top.html
-# file that will be included just after <body>.
-# This script uses pandoc to convert markdown to html.
+# If you want something on the top of every page, make a top.md
+# This script uses pandoc to convert markdown to html and it
+# needs a style.css file in the root directory
 
 command -v pandoc >/dev/null 2>&1 || { echo >&2 "Pandoc not installed. Aborting."; exit 1; }
 
 HEAD=top.md
 END=bottom.md
+PANDOC='pandoc --quiet -s --title=crdpa --highlight-style zenburn -c'
+CSS='/styles.css'
 
 if [ -f blog.md ]; then
     rm blog.md
@@ -25,34 +27,16 @@ else
     touch tmp.md
 fi
 
-
-header () {
-    { echo "<!DOCTYPE html>"; echo "<html>"; echo " <head>"; \
-    echo "  <meta http-equiv=\"Content-Type\" content=\"text/html\">"; \
-    echo "  <meta charset=\"utf-8\">"; \
-    echo "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"; \
-    echo "  <title>crdpa</title>"; echo "  <link rel=\"stylesheet\" href=\"/styles.css\">"; \
-    echo " </head>"; echo "<body>"; echo ""; }
-}
-
-bottom () {
-    { echo "</body>"; echo "</html>"; }
-}
-
+# function that creates an index of posts
 blog () {
         if [ -f "$f2" ] && [ ! -f "${f2::-3}.html" ]; then
-            pandoc -o "${f2::-3}.tmp.html" "$f2"
-            {
-                header
-                cat "${f2::-3}.tmp.html"
-                bottom
-            } > "${f2::-3}.html"
-            rm "${f2::-3}.tmp.html"
+            $PANDOC "$CSS" -o "${f2::-3}.html" "$f2"
         fi
         l1=$(echo "${f2::-3}" | sed 's:.*/::')
         printf -- "- %s/[%s](%s)\n" "$y" "$l1" "${f2::-3}.html" >> tmp.md
 }
 
+# loop through all the markdown files writing the index
 for f1 in "blog/"*; do
     y="${f1: -4}"
     for f2 in "blog/$y/"*.md; do
@@ -60,6 +44,7 @@ for f1 in "blog/"*; do
     done
 done
 
+# turn the index upside down
 tac tmp.md >> blog.md
 rm tmp.md
 
@@ -80,14 +65,7 @@ if [ -f "$END" ]; then
     } >> index.md
 fi
 
-pandoc -o tmp.html index.md
-{
-    header
-    cat tmp.html
-    bottom
-} > index.html
-
-rm tmp.html index.md
+$PANDOC styles.css -o index.html index.md
 
 echo "Done..."
               
