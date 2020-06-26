@@ -10,7 +10,7 @@ command -v pandoc >/dev/null 2>&1 || { echo >&2 "Pandoc not installed. Aborting.
 
 HEAD=top.md
 END=bottom.md
-PANDOC='pandoc --quiet -s --title=crdpa --highlight-style zenburn -c'
+PANDOC='pandoc --quiet -s --title=crdpa --highlight-style breezedark -c'
 CSS='/styles.css'
 
 if [ -f blog.md ]; then
