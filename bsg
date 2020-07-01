@@ -2,9 +2,8 @@
 #  _  _ _|  _   _
 # (_ | (_| |_) (_|
 #          |    
-# If you want something on the top of every page, make a top.md
-# This script uses pandoc to convert markdown to html and it
-# needs a style.css file in the root directory
+# top.md is what appears above the blog index and bottom.md below the index.
+# it needs a style.css file in the root directory of the website
 
 command -v pandoc >/dev/null 2>&1 || { echo >&2 "Pandoc not installed. Aborting."; exit 1; }
 
