@@ -38,7 +38,7 @@ blog () {
             echo "$already_exist already converted to html"
         fi
         link_text=$(echo "${f2::-3}" | sed 's:.*/::' | cut -c 7-)
-        printf -- "- %s%s%s | [%s](%s)\n" "$d" "$m" "$y" "$link_text" "${f2::-3}.html" >> tmp.md
+        printf -- "- %s%s%s / [%s](%s)\n" "$d" "$m" "$y" "$link_text" "${f2::-3}.html" >> tmp.md
 }
 
 # loop through all the markdown files writing the index
@@ -72,5 +72,5 @@ fi
 
 $pandoc styles.css -o index.html index.md
 
-echo "Done..."
+echo "Done!"
               
